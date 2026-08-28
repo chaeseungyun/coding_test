@@ -1,5 +1,5 @@
 # D09 | 2주차 해시
-# 접근: "같은 이름이 참가 명단에 더 많이 있으면" 그 이름 중 한 명이 완주하지 못한 것이다. dict 로 빈도수 계산하고 키가 없거나 값이 크면 반환
+# 접근: participant_counter - completion_counter
 # 시간복잡도: O(n)
 # 막힌 지점: (없으면 "없음")
 #
@@ -28,6 +28,7 @@
 #       -> "mislav"    (mislav가 두 명 참가, 한 명만 완주)
 # ------------------------------------------------------------
 
+'''
 def solution(participant: list[str], completion: list[str]) -> str:
     def makeDict(arr):
         d = {}
@@ -48,6 +49,18 @@ def solution(participant: list[str], completion: list[str]) -> str:
             return name
     
     return ''
+'''
+
+from collections import Counter
+
+def solution(participant: list[str], completion: list[str]) -> str:
+    participant_counter = Counter(participant)
+    completion_counter = Counter(completion)
+
+    not_finished = participant_counter - completion_counter # Counter 끼리는 덧셈 뺄셈이 가능함. 지금 문제의 경우 participant가 무조건 한 명 더 많기 때문에 { name : 1 } 꼴이 됨. 반환 값도 Counter
+    
+    return list(not_finished.keys())[0]
+
 
 if __name__ == "__main__":
     tests = [
