@@ -1,23 +1,27 @@
 ---
 name: make-daily-problem
 description: >-
-  Creates the day's Python coding-test problem as a self-contained .py file from
-  STUDY_PLAN.md so the user never has to search Programmers or Baekjoon. Use when
-  the user asks for 오늘 문제, 내일 문제, 문제 만들어줘, D01/일차 문제, 오늘의 코테, or a daily
-  practice problem in this repo.
+  Creates the day's coding-test problem as a self-contained .py file from
+  STUDY_PLAN.md (Python) and SQL_STUDY_PLAN.md (SQL) so the user never has to
+  search Programmers or Baekjoon. Use when the user asks for 오늘 문제, 내일 문제,
+  문제 만들어줘, D01/일차 문제, 오늘의 코테, SQL 문제, S01, or a daily practice
+  problem in this repo.
 ---
 
 # 일일 코테 문제 만들기
 
-이 저장소에서 하루에 문제 하나. 사용자는 플랫폼을 열지 않는다. 에이전트가 `STUDY_PLAN.md`를 보고 오늘 파일을 만든다.
+이 저장소에서 하루에 알고리즘 문제 하나, SQL 문제 하나. 사용자는 플랫폼을 열지 않는다.
+에이전트가 `STUDY_PLAN.md`와 `SQL_STUDY_PLAN.md`를 보고 오늘 파일을 만든다.
 
-유저 대면 메시지는 **한국어**. 풀이·알고리즘 힌트는 파일을 만들 때 **절대 적지 않는다.**
+유저 대면 메시지는 **한국어**. 풀이·힌트·정답 쿼리는 파일을 만들 때 **절대 적지 않는다.**
 
 ## 언제
 
 - "오늘 문제", "문제 만들어줘", "D12 문제", "내일 거"
+- "SQL 문제", "오늘 SQL", "S01"
 - 날짜만 말하고 문제를 달라는 경우
 
+기본은 **알고리즘과 SQL을 둘 다** 만든다. "알고리즘만" / "SQL만"이라고 하면 그쪽만 만든다.
 이미 오늘 파일이 있으면 덮어쓰지 말고 경로만 알려 준다. 다시 만들라는 요청이 있을 때만 덮는다.
 
 ## 워크플로
@@ -30,6 +34,8 @@ description: >-
 4. 표에서 그날 문제·유형·플랫폼·폴더를 고른다.
 5. `유형폴더/YYYY-MM-DD-문제이름.py` 가 없으면 만든다. 폴더도 없으면 만든다.
 6. 사용자에게 경로, 한 줄 요약, 실행 커맨드만 안내한다. 접근법·정답은 말하지 않는다.
+
+SQL도 만들 차례면, 이어서 `SQL_STUDY_PLAN.md`로 같은 날짜의 `Sn` 파일을 만든다. 절차는 아래 「SQL 트랙」.
 
 ### 복습 날
 
@@ -113,12 +119,40 @@ if __name__ == "__main__":
 - 난이도는 그날 표 수준. 1기 습관 형성이므로 몰아넣지 않는다
 - 별표(`*`) 문제여도 일단 그 문제를 낸다. 사용자가 어렵다고 하면 같은 유형의 쉬운 대체 문제로 다시 만든다
 
+## SQL 트랙
+
+알고리즘 문제와 별도다. `SQL_STUDY_PLAN.md`의 시작일 `2026-09-27`로 `Sn`을 계산한다.
+`n = (대상날짜 - 2026-09-27).days + 1` (S01이 시작일).
+
+1. 표에서 그날 문제·포인트·폴더를 고른다.
+2. `sql/유형폴더/YYYY-MM-DD-문제이름.py` 가 없으면 만든다.
+3. S42 회고일은 문제를 만들지 말고, 플랜의 회고 항목을 채우라고 안내한다.
+4. 복습·약점 복습이면 그 주 유형의 **새 문제**를 만든다. 예전 파일을 복사하지 않는다.
+
+| 주 | 폴더 |
+|----|------|
+| 1 | `sql/01-select/` |
+| 2 | `sql/02-group-by/` |
+| 3 | `sql/03-join/` |
+| 4 | `sql/04-subquery/` |
+| 5 | `sql/05-window/` |
+| 6 | `sql/06-review/` |
+
+골든 예시: `sql/01-select/2026-09-27-연락처-없는-휴면-회원.py`
+
+- `solution() -> str` 본문은 `...` 만. 정답 SELECT를 넣지 않는다
+- 지문에 스키마, 조건, 결과 컬럼 순서, 정렬, 예제 2개 이상을 한국어로 적는다
+- 예제마다 왜 그 행이 남거나 빠지는지 짧게 적는다. 문법 힌트는 적지 않는다
+- 채점은 파일 안 SQLite 인메모리. 공식 예제와 엣지(빈 결과, NULL, 정렬 동점)를 `tests`에 넣는다
+- 1~2주차 문제에 조인·서브쿼리·윈도우를 넣지 않는다
+- 기대 결과가 맞는지 확인할 때는 문제 파일을 채우지 말고, 쉘에서만 쿼리를 돌려 본다
+
 ## 하지 말 것
 
-- 정답 구현, 힌트가 되는 함수명/`TODO`
+- 정답 구현, 힌트가 되는 함수명/`TODO`, 정답 SELECT
 - 마크다운 문제 파일, 노트북, 여러 파일로 쪼개기
-- 하루에 2문제
-- 플랜에 없는 고급 유형(세그트리, 플로우 등)을 임의로 넣기
+- 하루에 알고리즘 2문제, 또는 SQL 2문제. 트랙이 다르면 같은 날 하나씩은 만든다
+- 플랜에 없는 고급 유형(세그트리, 플로우, SQL 계층형·PIVOT 등)을 임의로 넣기
 - 테스트 없이 빈 `solution`만 주기
 - 파일을 만든 뒤 `python`으로 돌려 보며 정답을 검증하려고 채우기
 
@@ -126,9 +160,9 @@ if __name__ == "__main__":
 
 짧게. 예:
 
-- 오늘(날짜)은 **Dxx — 문제이름**
+- 오늘(날짜)은 **Dxx — 문제이름**, SQL이 있으면 **Sxx — 문제이름**
 - 경로
-- `solution`만 채우면 된다 (한 줄 조건)
+- `solution`만 채우면 된다 (한 줄 조건. SQL이면 SELECT 문자열)
 - 실행: `python {경로}`
 - 막히면 15분 뒤 힌트만 달라고 하면 된다
 
