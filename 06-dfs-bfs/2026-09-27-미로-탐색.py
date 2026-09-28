@@ -1,8 +1,8 @@
 # D39 | 6주차 DFS · BFS
-# 접근:
-# 시간복잡도:
-# 막힌 지점: (없으면 "없음")
-#
+# 접근: bfs로 최단 거리를 구한다.
+# 시간복잡도: O(n * m)
+# 막힌 지점: (없으면 "없음") board[ny][nx] == '1' 을 board[ny][nx] == 1 로 잘못 써서 오답이 났었다.
+# 20분 소요
 # ------------------------------------------------------------
 # 문제: 미로 탐색
 #
@@ -43,8 +43,35 @@
 #       (왼쪽 줄을 내려간 뒤 맨 아래 줄을 가로지르면 13칸)
 # ------------------------------------------------------------
 
+from collections import deque
+
 def solution(board: list[str]) -> int:
-    ...
+    direction = [(1, 0), (0, 1), (-1, 0), (0, -1)] # 하, 우, 상, 좌 
+    # r, c
+    n, m = len(board), len(board[0])
+    # 방문한 노드는 다시 방문하지 않는다. 최소 거리를 구하기 때문.
+    visited = [[0 for _ in range(m)] for _ in range(n)]
+
+    queue = deque()
+    start = (0, 0)
+    end = (n - 1, m - 1)
+
+    queue.append((start))
+    visited[0][0] += 1
+
+    # bfs 시작
+    while queue:
+        coord = queue.popleft()
+        r, c = coord
+        if (r, c) == end:
+            return visited[r][c]
+        for dr, dc in direction:
+            nr, nc = r + dr, c + dc
+            if n > nr >= 0 and m > nc >= 0 and board[nr][nc] == '1' and visited[nr][nc] == 0:
+                queue.append((nr, nc))
+                visited[nr][nc] = visited[r][c] + 1
+    
+    return 0
 
 
 if __name__ == "__main__":
