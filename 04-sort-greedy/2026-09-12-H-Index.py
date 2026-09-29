@@ -1,8 +1,8 @@
 # D24 | 4주차 정렬 · 그리디
-# 접근:
-# 시간복잡도:
-# 막힌 지점: (없으면 "없음")
-#
+# 접근: 0 ~ 가장 많이 인용된 횟수를 탐색하며 h의 최댓값을 찾는다. 오름차순으로 정렬하고 h가 들어갈 자리를 찾는다.
+# 시간복잡도: O(n * m)
+# 막힌 지점: (없으면 "없음") 문제를 이해하는데 오래 걸렸다. 논문이 h번 이상 인용되어야 하며 그 개수를 구할 때 h-index라는 이름때문에 내가 정의한 h를 인덱스로 착각하는 등 오류가 있었음.
+# 소요 시간: 25분
 # ------------------------------------------------------------
 # 문제: H-Index
 #
@@ -30,14 +30,18 @@
 #       (한 번도 인용되지 않아 h=0)
 # ------------------------------------------------------------
 
-from bisect import bisect_left
 
 def solution(citations: list[int]) -> int:
+    high = max(citations)
+    citations.sort()
+    result = 0
 
+    for idx, item in enumerate(citations): # item: 논문의 인용 횟수
+        for h in range(high + 1): # h: h-index
+            if h <= item and len(citations) - idx >= h: # h번 이상 인용된 item 찾기. 리스트 길이 - 그 논문의 인덱스로 h보다 많거나 같게 인용됐는지 확인
+                result = max(h, result) # 가장 큰 h-index
 
-
-    return 0
-
+    return result
 
 if __name__ == "__main__":
     tests = [
