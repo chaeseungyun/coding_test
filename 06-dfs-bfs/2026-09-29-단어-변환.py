@@ -1,7 +1,7 @@
 # D41 | 6주차 DFS · BFS
-# 접근:
-# 시간복잡도:
-# 막힌 지점: (없으면 "없음")
+# 접근: 현재 글자에서 최종 글자로 가는 경로들을 BFS를 통해 최단 경로를 계산한다.
+# 시간복잡도: O(n^2 * L)
+# 막힌 지점: (없으면 "없음") 없음
 #
 # ------------------------------------------------------------
 # 문제: 단어 변환
@@ -44,8 +44,48 @@
 #       (끝에서부터 한 글자씩만 바뀌어 3번)
 # ------------------------------------------------------------
 
+from collections import deque
+
 def solution(begin: str, target: str, words: list[str]) -> int:
-    ...
+    '''
+    한 글자만 바뀌었는지, 그 글자가 바꿀 수 있는 단어인지 확인해야 함.
+    target은 words 안에 있어야 함.
+
+    1. 현재 단어와 words의 글자를 하나씩 비교하며 한 글자만 바뀐게 있는지 확인한다. 이러면 words에 있는 단어만 사용 가능하다.
+    2. 가능한 words를 사용하여 1번을 반복한다.
+    
+    최소 횟수를 구해야하므로 bfs가 적절할 것 같다.
+    '''
+    # 규칙을 지킬 수 없음
+    if target not in words:
+        return 0
+
+    def compareWithOne(before, after):
+        count = 0
+
+        for i in range(len(before)):
+            if before[i] != after[i]:
+                count += 1
+                if count > 1:
+                    return False
+        return count == 1
+    
+    queue = deque()
+    queue.append((begin, 0))
+    visited = set()
+
+    while queue:
+        cur, depth = queue.popleft()
+        if cur == target:
+            return depth
+
+        for word in words:
+            if word not in visited and compareWithOne(cur, word):
+                queue.append((word, depth + 1))
+                visited.add(word)
+    
+    return 0
+
 
 
 if __name__ == "__main__":
